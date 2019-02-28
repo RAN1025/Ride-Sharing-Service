@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>Rides</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link href="{% static 'users/css/fancybox/jquery.fancybox.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/bootstrap-theme.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/slippry.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/color/default.css' %}" rel="stylesheet"/>
+
+    <script src="{% static 'users/js/jquery-1.9.1.min.js' %}"></script>
+    <script src="{% static 'users/js/jquery.easing.js' %}"></script>
+    <script src="{% static 'users/js/classie.js' %}"></script>
+    <script src="{% static 'users/js/bootstrap.js' %}"></script>
+    <script src="{% static 'users/js/slippry.min.js' %}"></script>
+    <script src="{% static 'users/js/nagging-menu.js' %}"></script>
+    <script src="{% static 'users/js/jquery.nav.js' %}"></script>
+    <script src="{% static 'users/js/jquery.scrollTo.js' %}"></script>
+    <script src="{% static 'users/js/jquery.fancybox.pack.js' %}"></script>
+    <script src="{% static 'users/js/jquery.fancybox-media.js' %}"></script>
+    <script src="{% static 'users/js/masonry.pkgd.min.js' %}"></script>
+    <script src="{% static 'users/js/imagesloaded.js' %}"></script>
+    <script src="{% static 'users/js/jquery.nicescroll.min.js' %}"></script>
+    <script src="{% static 'users/js/validate.js' %}"></script>
+    <script src="{% static 'users/js/AnimOnScroll.js' %}"></script>
+    <script src="{% static 'users/js/modernizr.custom.js' %}"></script>
+    <script src="{% static 'users/js/custom.js' %}"></script>
+</head>
+
+<body>
+{% block content %}
+    <header>
+        <div id="navigation" class="navbar navbar-inverse navbar-fixed-top default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'users:homepage' %}">Ride Share</a>
+                </div>
+                <div class="navigation">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <nav>
+                            <ul class="nav navbar-nav navbar-right">
+                                {% if not user_profile.driver %}
+                                    <li><a href="{% url 'users:regisdriver' user.id %}">Register for driver</a>
+                                    </li>
+                                {% endif %}
+                                <li><a href="{% url 'users:profile' user.id %}">Account Info</a></li>
+                                <li><a href="{% url 'users:logout' %}">Log out</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="heading">
+                        <h3><span>Hi {{ user.first_name }}, welcomes!</span></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-md-8 col-md-offset-3">
+                <!-- Info for the rider part -->
+                {% if openrides|length > 0 %}
+                    <ul><h4>Here are your unconfirmed rides as main rider:</h4>
+                        {% for ride in openrides %}
+                            <li>
+                                <a href="{% url 'users:curtride' user.id ride.id %}">To {{ ride.destination }}
+                                    before {{ ride.arrivaldate }}</a>
+                                {% if ride.sharers|length > 0 %}
+                                    <p>You have {{ ride.group }} group(s) of sharer</p>
+                                    {% for s in ride.sharers %}
+                                        <p>Sharer Name: {{ s.name }}, Number of Passengers: {{ s.num }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>This ride has no share riders.</p>
+                                {% endif %}
+                                <p>Delete this ride? <a href="{% url 'users:delete' user.id ride.id %}">Yes</a></p>
+                                <br>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if cfm_info_rider|length > 0 %}
+                    <ul><h4>Here are your confirmed rides as main rider:</h4>
+                        {% for ride in cfm_info_rider %}
+                            <li>
+                                <p>Driver Name: {{ ride.driver_name }}</p>
+                                <p>Vehicle Type: {{ ride.vehicle_info }}</p>
+                                <p>Plate Number: {{ ride.vehicle_plate }}</p>
+                                <p>To {{ ride.destination }} before {{ ride.arrivaldate }}</p>
+                                {% if ride.sharers|length > 0 %}
+                                    <p>You have {{ ride.group }} group(s) of sharer</p>
+                                    {% for s in ride.sharers %}
+                                        <p>Sharer Name: {{ s.name }}, Number of Passengers: {{ s.num }}</p>
+                                    {% endfor %}
+                                {% else %}
+                                    <p>This ride has no share riders.</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <br>
+
+                <!-- Info for the sharer part -->
+                {% if openshares|length > 0 %}
+                    <ul><h4>Here are your unconfirmed rides as sharer:</h4>
+                        {% for ride in openshares %}
+                            <li>
+                                <a href="{% url 'users:editshare' user.id ride.id %}">To {{ ride.destination }}
+                                    before {{ ride.arrivaldate }}</a>
+                                <p>Do you want to exit this ride? <a
+                                        href="{% url 'users:deleteshare' user.id ride.id %}">Yes</a>
+                                </p>
+                                <br>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                {% if confirmedshares|length > 0 %}
+                    <ul><h4>Here are your confirmed rides as sharer:</h4>
+                        {% for ride in confirmedshares %}
+                            <li>
+                                <p>Driver Name: {{ ride.driver_name }}</p>
+                                <p>Vehicle Type: {{ ride.vehicle_info }}</p>
+                                <p>Plate Number: {{ ride.vehicle_plate }}</p>
+                                <p>To {{ ride.destination }} before {{ ride.arrivaldate }}</p>
+                                <p>You are sharing this ride with main rider: {{ ride.rider_name }}</p>
+                                <br>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <br>
+
+                <!-- Info for the driver part -->
+                {% if user_profile.driver %}
+                    {% if has_drive %}
+                        <ul><h4>And here's your drive info as a driver:</h4>
+                            <p>Your drive to {{ drive.destination }}  before {{ drive.arrivaldate }} is going on!<a
+                                    href="{% url 'users:complete' user.id drive.id %}">complete</a>
+                            </p>
+                            <p>More Information:</p>
+                            <p>Main Rider Name: {{ owner }}, Number of Passengers: {{ drive.passenger }}</p>
+                            {% if sharers|length > 0 %}
+                                <ul>
+                                    {% for share in sharers %}
+                                        <li>
+                                            <p>Sharer Name: {{ share.name }}, Number of Passengers: {{ share.num }}</p>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>This is ride has no sharer yet.</p>
+                            {% endif %}
+                        </ul>
+                    {% else %}
+                        <a href="{% url 'users:findridedriver' user.id %}">Find a new ride as driver!</a>
+                    {% endif %}
+                {% endif %}
+
+                <br>
+
+                <a href="{% url 'users:newride' user.id %}">Start a new ride now!</a>
+                <p>or</p>
+                <a href="{% url 'users:newshare' user.id %}">Join a ride with other riders!</a>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+</body>
+</html>

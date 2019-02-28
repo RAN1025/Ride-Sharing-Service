@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>Edit Share</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link href="{% static 'users/css/fancybox/jquery.fancybox.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/bootstrap-theme.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/slippry.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/css/style.css' %}" rel="stylesheet"/>
+    <link href="{% static 'users/color/default.css' %}" rel="stylesheet"/>
+
+    <script src="{% static 'users/js/jquery-1.9.1.min.js' %}"></script>
+    <script src="{% static 'users/js/jquery.easing.js' %}"></script>
+    <script src="{% static 'users/js/classie.js' %}"></script>
+    <script src="{% static 'users/js/bootstrap.js' %}"></script>
+    <script src="{% static 'users/js/slippry.min.js' %}"></script>
+    <script src="{% static 'users/js/nagging-menu.js' %}"></script>
+    <script src="{% static 'users/js/jquery.nav.js' %}"></script>
+    <script src="{% static 'users/js/jquery.scrollTo.js' %}"></script>
+    <script src="{% static 'users/js/jquery.fancybox.pack.js' %}"></script>
+    <script src="{% static 'users/js/jquery.fancybox-media.js' %}"></script>
+    <script src="{% static 'users/js/masonry.pkgd.min.js' %}"></script>
+    <script src="{% static 'users/js/imagesloaded.js' %}"></script>
+    <script src="{% static 'users/js/jquery.nicescroll.min.js' %}"></script>
+    <script src="{% static 'users/js/validate.js' %}"></script>
+    <script src="{% static 'users/js/AnimOnScroll.js' %}"></script>
+    <script src="{% static 'users/js/modernizr.custom.js' %}"></script>
+    <script src="{% static 'users/js/custom.js' %}"></script>
+</head>
+
+<body>
+{% block content %}
+    <header>
+        <div id="navigation" class="navbar navbar-inverse navbar-fixed-top default" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'users:homepage' %}">Ride Share</a>
+                </div>
+                <div class="navigation">
+                    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <nav>
+                            <ul class="nav navbar-nav navbar-right">
+                                {% if user.is_authenticated %}
+                                    <li><a href="{% url 'users:display' user.id %}">Back</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="contact" class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="heading">
+                        <h2><span>Please edit the information about your share ride</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-md-8 col-md-offset-3">
+                <div class="form-wrapper">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="field-wrapper">
+                                {{ field.errors }}
+                                {{ field.label_tag }} {{ field }}
+                                {% if field.help_text %}
+                                    {{ field.help_text|safe }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="button-wrapper submit"><input class="btn btn-lg btn-theme pull-left" type="submit" value="Submit Edit"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+</body>
+</html>

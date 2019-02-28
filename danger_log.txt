@@ -1,0 +1,11 @@
+1.25 We find that driver cannot join multiple rides at the same time. So, in our UI, when the driver has an existing ride, he does not have the join-ride option.
+
+1.26 we find that in our forms, the user might type some invalid input. For example, number of passengers might be a string instead of numeric number. In this case, it cannot be compared with valid number value. Thus, we designed every field with specific field, and set some rules for validation, like the number of passengers must fit in a fixed range.
+
+1.28 We find that if the user is not login, but he tries to query information, security issue will happen. To handle this, we import the login required decorator from django.contrib.auth.decorators, which allows us to redirect the user to homepage if he is trying to access person information while not login.
+
+1.28 we find that in the models designed for ride, the sharable field needs to be considered specifically. Once a sharable ride is joined by other sharers, it would be conflict to change the sharable field. And according to Uber or Lyft conventions, the user can only choose to share or not at the beginning when they register their ride. So, we do not give user permission to edit sharable field once it is registered.
+
+1.31 We find that if a rider opens the edit page for an open ride, he can stay with it; At the same time, if this ride is confirmed by another driver, the information of this ride should not be edited. But since the rider has already opened the edit page, he can submit his edit request and change the information. So, in our process of handling edit information, we first check if the ride's status is open; If not, the handling function immediately redirects to the display page and not changes data in database.
+
+2.4 We find that if the driver wants to edit his vehicle information while he has a ride, this would be a critical section. So, when we design this part, we first check if there is an existing confirmed ride associated with the driver; If so, his edit will not be accepted.
